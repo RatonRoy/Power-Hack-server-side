@@ -23,13 +23,18 @@ async function run() {
 	try {
 		await client.connect();
 		const userCollection = client.db("All-bills").collection("bill");
-		const bill = {
-			name: "abc", 
-			email: "myname@gmail.com", 
-			mobile: " 9345454"
-		}
-		const result = await userCollection.insertOne(bill);
-		console.log(`A document was inserted with the _id: ${result.insertedId}`);
+		
+		app.post('/api/add-billing', async (req, res) => {
+			const bill = req.body;
+			const result = await userCollection.insertOne(bill);
+			res.send(result);
+		})
+		app.get('/api/billing-list', async (req, res) => {
+			const query = {};
+			const cursor = userCollection.find(query);
+			const bills = await cursor.toArray();
+			res.send(bills);
+		});
 	}
 	finally {
 
